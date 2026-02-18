@@ -1,0 +1,73 @@
+-- Enable necessary functions (none needed for uuid in MySQL 8 except built-in UUID())
+
+-- Users Table
+CREATE TABLE IF NOT EXISTS users (
+    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
+    username VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL CHECK (role IN ('STUDENT', 'STAFF', 'ADMIN')),
+    failed_attempts INT DEFAULT 0,
+    locked BOOLEAN DEFAULT FALSE,
+    password_reset_requested BOOLEAN DEFAULT FALSE,
+    last_login TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Halls Table
+CREATE TABLE IF NOT EXISTS halls (
+    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(50) NOT NULL CHECK (type IN ('CLASSROOM', 'LAB', 'EVENT_HALL')),
+    capacity INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Bookings Table
+CREATE TABLE IF NOT EXISTS bookings (
+    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
+    user_id BINARY(16) NULL,
+    hall_id BINARY(16) NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    status VARCHAR(50) DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'APPROVED_STAFF', 'APPROVED_ADMIN', 'REJECTED')),
+    purpose TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (hall_id) REFERENCES halls(id) ON DELETE CASCADE
+);
+
+-- Exams Table
+CREATE TABLE IF NOT EXISTS exams (
+    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
+    name VARCHAR(255) NOT NULL,
+    date TIMESTAMP NOT NULL,
+    hall_id BINARY(16) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (hall_id) REFERENCES halls(id) ON DELETE SET NULL
+);
+
+-- Exam Allotments Table
+CREATE TABLE IF NOT EXISTS exam_allotments (
+    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
+    exam_id BINARY(16) NULL,
+    student_id BINARY(16) NULL,
+    seat_number VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Logs Table
+CREATE TABLE IF NOT EXISTS logs (
+    id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
+    action VARCHAR(255) NOT NULL,
+    user_id BINARY(16) NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
