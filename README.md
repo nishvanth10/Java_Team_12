@@ -75,3 +75,31 @@ A full-stack application for managing university resources, bookings, and exams.
 ## Troubleshooting
 -   **Database Connection Refused:** Ensure MySQL service is running and credentials in `application.properties` are correct.
 -   **Port Conflicts:** Ensure ports 8082 (backend) and 5173 (frontend) are free.
+## Structure
+
+                   ┌─────────────┐
+                   │    USER     │
+                   └──────┬──────┘
+                          │
+                          ▼
+                ┌──────────────────┐
+                │ React Frontend   │
+                │ (UI Components)  │
+                └────────┬─────────┘
+                         │ Axios API
+                         ▼
+                ┌──────────────────┐
+                │ Spring Boot API  │
+                │ - Controllers    │
+                │ - Services       │
+                │ - Repositories   │
+                │ - JWT Security   │
+                └────────┬─────────┘
+                         │ JPA
+                         ▼
+                ┌──────────────────┐
+                │     MySQL DB     │
+                │ - User Table     │
+                │ - Booking Table  │
+                │ - Hall Table     │
+                └──────────────────┘
