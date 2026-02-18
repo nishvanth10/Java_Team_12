@@ -5,11 +5,11 @@ A full-stack application for managing university resources, bookings, and exams.
 ## Tech Stack
 - **Backend:** Java Spring Boot, JPA, Spring Security, JWT
 - **Frontend:** React (Vite), Tailwind CSS, Axios
-- **Database:** Supabase (PostgreSQL)
+- **Database:** MySql
 
 ## Prerequisites
 - Java 17+
-- Node.js 18+
+- react
 - Maven
 
 ## Setup & Running
